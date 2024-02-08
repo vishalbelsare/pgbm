@@ -1,3 +1,26 @@
+## 2.3.0 ##
+* Added Python 3.11 testing scripts to wheel
+* Update scikit-learn minimum dependency requirement to 1.2
+* Update MacOSX minimum dependency to MacOSX 10.13
+
+## 2.1.2 ##
+* Fixed bug in sklearn cython code
+
+## 2.1.1 ##
+* Fixed bug in missing values in scikit-learn wrapper for Torch backend
+
+## 2.1.0 ##
+* Added support for missing values in Torch backend
+* Fixed documentation not rendering properly
+
+## 2.0.0 ##
+* Added `HistGradientBoostingRegressor`, a fork of scikit-learn's version that allows to use PGBM whilst being fully compatible with scikit-learn
+* Deprecated `pgbm_nb` in favor of `HistGradientBoostingRegressor`. 
+* Restructured the package; the Torch version (`PGBMRegressor`) is now available under `pgbm.torch`, whereas the scikit-learn version is available under `pgbm.sklearn`, and the distributed version under `pgbm.dist`
+## 1.8.0 ##
+* Fixed bug in PGBMRegressor not returning sample_statistics properly
+* Train and validation metrics are now an attribute of a fitted learner
+
 ## 1.7.1 ##
 * Fixed bug in Manifest.in 
 

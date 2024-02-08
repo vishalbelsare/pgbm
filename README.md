@@ -4,34 +4,38 @@
 [![GitHub license](https://img.shields.io/pypi/l/pgbm)](https://github.com/elephaint/pgbm/blob/main/LICENSE)
 
 _Probabilistic Gradient Boosting Machines_ (PGBM) is a probabilistic gradient boosting framework in Python based on PyTorch/Numba, developed by Airlab in Amsterdam. It provides the following advantages over existing frameworks:
-* Probabilistic regression estimates instead of only point estimates. ([example](https://github.com/elephaint/pgbm/blob/main/examples/pytorch/example01_housing_cpu.py))
-* Auto-differentiation of custom loss functions. ([example](https://github.com/elephaint/pgbm/blob/main/examples/pytorch/example08_housing_autodiff.py), [example](https://github.com/elephaint/pgbm/blob/main/examples/pytorch/example10_covidhospitaladmissions.py))
-* Native GPU-acceleration. ([example](https://github.com/elephaint/pgbm/blob/main/examples/pytorch/example02_housing_gpu.py))
-* Distributed training for CPU and GPU, across multiple nodes. ([examples](https://github.com/elephaint/pgbm/blob/main/examples/pytorch_dist/))
-* Ability to optimize probabilistic estimates after training for a set of common distributions, without retraining the model. ([example](https://github.com/elephaint/pgbm/blob/main/examples/pytorch/example07_optimizeddistribution.py))
+* Probabilistic regression estimates instead of only point estimates. ([example](https://github.com/elephaint/pgbm/blob/main/examples/torch/example01_housing_cpu.py))
+* Auto-differentiation of custom loss functions. ([example](https://github.com/elephaint/pgbm/blob/main/examples/torch/example08_housing_autodiff.py), [example](https://github.com/elephaint/pgbm/blob/main/examples/torch/example10_covidhospitaladmissions.py))
+* Native GPU-acceleration. ([example](https://github.com/elephaint/pgbm/blob/main/examples/torch/example02_housing_gpu.py))
+* Distributed training for CPU and GPU, across multiple nodes. ([examples](https://github.com/elephaint/pgbm/blob/main/examples/torch_dist/))
+* Ability to optimize probabilistic estimates after training for a set of common distributions, without retraining the model. ([example](https://github.com/elephaint/pgbm/blob/main/examples/torch/example07_optimizeddistribution.py))
+* Full integration with scikit-learn through a fork of HistGradientBoostingRegressor ([examples](https://github.com/elephaint/pgbm/tree/main/examples/sklearn))
 
 It is aimed at users interested in solving large-scale tabular probabilistic regression problems, such as probabilistic time series forecasting. 
 
 For more details, [read the docs](https://pgbm.readthedocs.io/en/latest/index.html) or [our paper](https://arxiv.org/abs/2106.01682) or check out the [examples](https://github.com/elephaint/pgbm/tree/main/examples).
 
-Below a simple example using our sklearn wrapper:
-```
-from pgbm import PGBMRegressor
+Below a simple example to generate 1000 estimates for each of our test points:
+```py
+from pgbm.sklearn import HistGradientBoostingRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.datasets import fetch_california_housing
+
 X, y = fetch_california_housing(return_X_y=True)
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
-model = PGBMRegressor().fit(X_train, y_train)  
-yhat_point = model.predict(X_test)
-yhat_dist = model.predict_dist(X_test)
+model = HistGradientBoostingRegressor().fit(X_train, y_train) 
+yhat_test, yhat_test_std = model.predict(X_test, return_std=True)
+yhat_dist = model.sample(yhat_test, yhat_test_std, n_estimates=1000)
 ```
+
+See also [this example](https://github.com/elephaint/pgbm/blob/main/examples/sklearn/example14_probregression.py) where we compare PGBM to standard gradient boosting quantile regression methods, demonstrating that we can achieve comparable or better probabilistic performance whilst only training a single model.
 
 ### Installation ###
 
 See [Installation](https://pgbm.readthedocs.io/en/latest/installation.html) section in our [docs](https://pgbm.readthedocs.io/en/latest/index.html).
 
 ### Support ###
-In general, PGBM works similar to existing gradient boosting packages such as LightGBM or xgboost (and it should be possible to more or less use it as a drop-in replacement), except that it is required to explicitly define a loss function and loss metric.
+In general, PGBM works similar to existing gradient boosting packages such as LightGBM or xgboost (and it should be possible to more or less use it as a drop-in replacement).
 
 * Read the docs for an overview of [hyperparameters](https://pgbm.readthedocs.io/en/latest/parameters.html) and a [function reference](https://pgbm.readthedocs.io/en/latest/function_reference.html).
 * See the [examples](https://github.com/elephaint/pgbm/tree/main/examples) folder for examples. 
